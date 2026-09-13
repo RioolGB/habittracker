@@ -64,13 +64,39 @@ npm run dev
 | Переменная | Назначение |
 | --- | --- |
 | `DATABASE_URL` | строка подключения PostgreSQL |
-| `REDIS_URL` | Redis. Если недоступен — fallback на in-memory (dev) |
+| `REDIS_URL` | Redis. Если пусто — Redis отключён (in-memory); если задан, но недоступен — fallback тоже |
 | `JWT_SECRET` | секрет подписи токенов |
 | `ACCESS_TOKEN_TTL` / `REFRESH_TOKEN_TTL` | время жизни токенов |
 | `ENABLE_REMINDERS` | включает планировщик напоминаний (push/email) |
 | `RESEND_API_KEY`, `EMAIL_FROM` | email-отправка (Resend). Без ключа письма логируются в консоль |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Web Push (VAPID-ключи) |
 | `FRONTEND_URL` | origin фронтенда для CORS |
+
+## Деплой на Railway (через GitHub)
+
+Репозиторий подключается к Railway кнопкой deploy. Координаты деплоя уже в репозитории:
+
+- корневой `Dockerfile` — сборка обоих workspace (backend + frontend) в один образ;
+- `railway.toml` — builder Dockerfile, healthcheck `/api/health`;
+- прод-режим раздаёт собранный SPA прямо с Express (см. `backend/src/app.ts`), поэтому
+  хостится один сервис на одном порту.
+
+Шаги:
+
+1. **Railway** → **New Project** → **Deploy from GitHub repo** → выберите
+   `RioolGB/habittracker` (GitHub-интеграция понадобится один раз).
+   Railway соберёт по `Dockerfile` и запустит приложение.
+2. Добавьте **PostgreSQL**: в проекте **New → Database → PostgreSQL**.
+   Переменная `DATABASE_URL` подставится в сервис автоматически.
+3. Переменные на вкладке **Variables**: задайте **`JWT_SECRET`** (длинная случайная строка).
+   `REDIS_URL` можно не задавать — refresh-токены будут в памяти процесса.
+   Опционально: `ENABLE_REMINDERS`, `RESEND_API_KEY`, `VAPID_*` (см. таблицу выше).
+4. **Deploy**. Схема БД (таблицы + глобальные категории) применяется автоматически
+   при старте (`backend/src/db/init.ts`).
+5. Откройте опубликованный домен сервиса (например `https://habittracker.up.railway.app`).
+   Health-check доступен по `/api/health`.
+
+При следующем пуше в `master` Railway пересоберёт и перевыкатит приложение автоматически.
 
 ## Структура
 

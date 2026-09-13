@@ -40,6 +40,7 @@ let redisAvailable = false;
 let memoryStore: MemoryTokenStore | null = null;
 
 async function connectRedis(): Promise<void> {
+  if (!config.redisUrl) return;
   try {
     redis = new Redis(config.redisUrl, {
       lazyConnect: true,

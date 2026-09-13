@@ -18,7 +18,7 @@ export const config = {
   databaseUrl:
     process.env.DATABASE_URL ??
     'postgres://habittracker:habittracker@localhost:5432/habittracker',
-  redisUrl: process.env.REDIS_URL ?? 'redis://localhost:6379',
+  redisUrl: process.env.REDIS_URL ? process.env.REDIS_URL : undefined,
   jwtSecret: process.env.JWT_SECRET ?? 'dev-secret-change-me',
   accessTokenTtl: process.env.ACCESS_TOKEN_TTL ?? '15m',
   refreshTokenTtlDays: int(process.env.REFRESH_TOKEN_TTL?.replace('d', ''), 30),
