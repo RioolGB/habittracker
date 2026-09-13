@@ -1,0 +1,26 @@
+# Зависимости
+node_modules/
+**/node_modules/
+
+# Сборка
+dist/
+build/
+
+# Переменные окружения
+.env
+.env.local
+!**/.env.example
+
+# Логи
+*.log
+npm-debug.log*
+
+# Данные БД
+*.sqlite
+*.sqlite3
+
+# Файлы IDE / ОС
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
